@@ -1,6 +1,9 @@
 name: Build AG PRINTS APK
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -11,11 +14,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Extract project
+      - name: Extract AG PRINTS project
         run: |
           unzip -q AG_PRINTS_Printing_Module_v0.6.zip
           cd AG_PRINTS_Printing_Module_v0.6
-          ls
+          ls -la
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -36,7 +39,7 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Build APK
+      - name: Build Debug APK
         run: |
           cd AG_PRINTS_Printing_Module_v0.6
           gradle --no-daemon assembleDebug
@@ -46,3 +49,4 @@ jobs:
         with:
           name: AG-PRINTS-Printing-APK
           path: AG_PRINTS_Printing_Module_v0.6/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
