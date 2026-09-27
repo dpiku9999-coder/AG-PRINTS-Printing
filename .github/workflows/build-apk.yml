@@ -1,0 +1,52 @@
+name: AG PRINTS APK Build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract AG PRINTS project
+        run: |
+          unzip -q AG_PRINTS_Printing_Module_v0.6.zip
+          cd AG_PRINTS_Printing_Module_v0.6
+          ls -la
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK
+        run: |
+          sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
+          yes | sdkmanager --licenses || true
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Build Debug APK
+        run: |
+          cd AG_PRINTS_Printing_Module_v0.6
+          gradle --no-daemon assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: AG-PRINTS-Printing-APK
+          path: AG_PRINTS_Printing_Module_v0.6/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
