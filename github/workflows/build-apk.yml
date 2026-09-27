@@ -1,4 +1,4 @@
-name: Build AG PRINTS APK
+name: AG PRINTS APK Build
 
 on:
   push:
